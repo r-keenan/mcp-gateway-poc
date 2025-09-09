@@ -1,0 +1,21 @@
+{
+  "name": "mcp-server",
+  "version": "1.0.0",
+  "description": "A basic MCP server with Express",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "@modelcontextprotocol/sdk": "^0.4.0"
+  },
+  "engines": {
+    "node": ">=24.7.0"
+  },
+  "keywords": ["mcp", "server", "express"],
+  "author": "",
+  "license": "MIT"
+}
