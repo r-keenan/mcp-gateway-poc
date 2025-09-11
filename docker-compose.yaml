@@ -21,14 +21,18 @@ services:
 
   mcp-server:
     build:
-      context: ./mcp-server
+      context: ./mcp-server-1
       dockerfile: Dockerfile
     ports:
-      - "3001:3000"
+      - "8000:8000"
     environment:
-      - PORT=3000
-      - NODE_ENV=production
+      - PORT=8000
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - app-network
 
