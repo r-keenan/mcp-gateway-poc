@@ -1,29 +1,19 @@
-FROM node:24-alpine
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY go.mod go.sum ./
+RUN go mod download
 
-RUN npm install -g pnpm
-
-# Install dependencies
-RUN pnpm install 
-
-# Copy source code
 COPY . .
+RUN go build -o main .
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
-USER nextjs
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates curl
+WORKDIR /root/
 
-# Expose port
-EXPOSE 3000
+COPY --from=builder /app/main .
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1))"
+EXPOSE 8080
 
-# Start the application
-CMD ["npm", "start"]
+CMD ["./main"]
